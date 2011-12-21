@@ -109,11 +109,19 @@
     <!-- The default quality value is the highest available resolution (1). -->
     <string name="pref_video_quality_default" translatable="false">1</string>
     <!-- Video quality setting entry. Videos will be recorded in 1080p quality. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_1080p" translatable="false">FullHD</string>
+    <string name="pref_video_quality_entry_1080p" translatable="false">1080p</string>
     <!-- Video quality setting entry. Videos will be recorded in 720p quality. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_720p" translatable="false">HD</string>
+    <string name="pref_video_quality_entry_720p" translatable="false">720p</string>
     <!-- Video quality setting entry. Videos will be recorded in 480p quality. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_480p" translatable="false">SD</string>
+    <string name="pref_video_quality_entry_480p" translatable="false">480p</string>
+    <!-- Video quality setting entry. Videos will be recorded in FWVGA quality. [CHAR LIMIT=24] -->
+    <string name="pref_video_quality_entry_fwvga" translatable="false">FWVGA</string>
+    <!-- Video quality setting entry. Videos will be recorded in WVGA quality. [CHAR LIMIT=24] -->
+    <string name="pref_video_quality_entry_wvga" translatable="false">WVGA</string>
+    <!-- Video quality setting entry. Videos will be recorded in VGA quality. [CHAR LIMIT=24] -->
+    <string name="pref_video_quality_entry_vga" translatable="false">VGA</string>
+    <!-- Video quality setting entry. Videos will be recorded in WQVGA quality. [CHAR LIMIT=24] -->
+    <string name="pref_video_quality_entry_wqvga" translatable="false">WQVGA</string>
     <!-- Video quality setting entry. Videos will be recorded in CIF quality. [CHAR LIMIT=24] -->
     <string name="pref_video_quality_entry_CIF" translatable="false">CIF</string>
     <!-- Video quality setting entry. Videos will be recorded in QVGA quality. [CHAR LIMIT=24] -->

@@ -124,6 +124,10 @@ public class VideoCamera extends ActivityBase
             CamcorderProfile.QUALITY_1080P,
             CamcorderProfile.QUALITY_720P,
             CamcorderProfile.QUALITY_480P,
+            CamcorderProfile.QUALITY_FWVGA,
+            CamcorderProfile.QUALITY_WVGA,
+            CamcorderProfile.QUALITY_VGA,
+            CamcorderProfile.QUALITY_WQVGA,
             CamcorderProfile.QUALITY_CIF,
             CamcorderProfile.QUALITY_QVGA,
             CamcorderProfile.QUALITY_QCIF};
