@@ -400,6 +400,9 @@
     <!-- The on/off switch in camera settings, such as store location. [CHAR LIMIT = NONE] -->
     <string name="accessibility_switch">%1$s switch</string>
 
+    <!-- The message is shown in dialog when the app encounters an unsupported video resolution-->
+    <string name="error_app_unsupported">Unsupported video resolution for this encoder type</string>
+
     <!-- TODO: remove the string as it is a work-around solution to bypass the default speak of the element type. -->
     <string name="empty" translatable="false">" "</string>
 </resources>
