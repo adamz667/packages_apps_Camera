@@ -481,6 +481,15 @@ public class CameraSettings {
         if (CamcorderProfile.hasProfile(mCameraId, CamcorderProfile.QUALITY_480P)) {
             supported.add(Integer.toString(CamcorderProfile.QUALITY_480P));
         }
+        if (CamcorderProfile.hasProfile(mCameraId, CamcorderProfile.QUALITY_CIF)) {
+            supported.add(Integer.toString(CamcorderProfile.QUALITY_CIF));
+        }
+        if (CamcorderProfile.hasProfile(mCameraId, CamcorderProfile.QUALITY_QVGA)) {
+            supported.add(Integer.toString(CamcorderProfile.QUALITY_QVGA));
+        }
+        if (CamcorderProfile.hasProfile(mCameraId, CamcorderProfile.QUALITY_QCIF)) {
+            supported.add(Integer.toString(CamcorderProfile.QUALITY_QCIF));
+        }
 
         return supported;
     }

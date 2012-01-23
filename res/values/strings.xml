@@ -106,14 +106,20 @@
 
     <!-- The Video quality settings in preference [CHAR LIMIT=21] -->
     <string name="pref_video_quality_title">Video quality</string>
-    <!-- The default quality value is 5 (720p) -->
-    <string name="pref_video_quality_default" translatable="false">5</string>
+    <!-- The default quality value is the highest available resolution (1). -->
+    <string name="pref_video_quality_default" translatable="false">1</string>
     <!-- Video quality setting entry. Videos will be recorded in 1080p quality. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_1080p" translatable="false">HD</string>
+    <string name="pref_video_quality_entry_1080p" translatable="false">FullHD</string>
     <!-- Video quality setting entry. Videos will be recorded in 720p quality. [CHAR LIMIT=24] -->
     <string name="pref_video_quality_entry_720p" translatable="false">HD</string>
     <!-- Video quality setting entry. Videos will be recorded in 480p quality. [CHAR LIMIT=24] -->
     <string name="pref_video_quality_entry_480p" translatable="false">SD</string>
+    <!-- Video quality setting entry. Videos will be recorded in CIF quality. [CHAR LIMIT=24] -->
+    <string name="pref_video_quality_entry_CIF" translatable="false">CIF</string>
+    <!-- Video quality setting entry. Videos will be recorded in QVGA quality. [CHAR LIMIT=24] -->
+    <string name="pref_video_quality_entry_QVGA" translatable="false">QVGA</string>
+    <!-- Video quality setting entry. Videos will be recorded in QCIF quality. [CHAR LIMIT=24] -->
+    <string name="pref_video_quality_entry_QCIF" translatable="false">QCIF</string>
 
     <!-- Describes the preference dialog for choosing interval between frame capture for
     time lapse recording. Appears at top of the dialog. [CHAR LIMIT=30] -->

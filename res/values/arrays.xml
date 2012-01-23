@@ -21,21 +21,33 @@
         <item>@string/pref_video_quality_entry_1080p</item>
         <item>@string/pref_video_quality_entry_720p</item>
         <item>@string/pref_video_quality_entry_480p</item>
+        <item>@string/pref_video_quality_entry_CIF</item>
+        <item>@string/pref_video_quality_entry_QVGA</item>
+        <item>@string/pref_video_quality_entry_QCIF</item>
     </string-array>
 
     <string-array name="pref_video_quality_entryvalues" translatable="false">
         <!-- The integer value of CamcorderProfile.QUALITY_1080P -->
         <item>6</item>
         <!-- The integer value of CamcorderProfile.QUALITY_720P -->
-        <item>@string/pref_video_quality_default</item>
+        <item>5</item>
         <!-- The integer value of CamcorderProfile.QUALITY_480P -->
         <item>4</item>
+        <!-- The integer value of CamcorderProfile.QUALITY_CIF -->
+        <item>3</item>
+        <!-- The integer value of CamcorderProfile.QUALITY_QVGA -->
+        <item>7</item>
+        <!-- The integer value of CamcorderProfile.QUALITY_QCIF -->
+        <item>2</item>
     </string-array>
 
     <array name="video_quality_largeicons" translatable="false">
         <item>@drawable/ic_quality_1080p</item>
         <item>@drawable/ic_quality_720p</item>
         <item>@drawable/ic_quality_480p</item>
+        <item>@drawable/ic_quality_cif</item>
+        <item>@drawable/ic_quality_qvga</item>
+        <item>@drawable/ic_quality_qcif</item>
     </array>
 
     <!-- Video Preferences Time Lapse Frame Interval icons -->
@@ -102,8 +114,8 @@
         <item>@string/pref_camera_picturesize_entry_1920x1080</item>
         <item>@string/pref_camera_picturesize_entry_1600x1200</item>
         <item>@string/pref_camera_picturesize_entry_1600x960</item>
-        <item>@string/pref_camera_picturesize_entry_1280x960</item>
         <item>@string/pref_camera_picturesize_entry_1280x1024</item>
+        <item>@string/pref_camera_picturesize_entry_1280x960</item>
         <item>@string/pref_camera_picturesize_entry_1280x768</item>
         <item>@string/pref_camera_picturesize_entry_1280x720</item>
         <item>@string/pref_camera_picturesize_entry_1024x768</item>
@@ -138,8 +150,8 @@
         <item>1920x1080</item>
         <item>1600x1200</item>
         <item>1600x960</item>
-        <item>1280x960</item>
         <item>1280x1024</item>
+        <item>1280x960</item>
         <item>1280x768</item>
         <item>1280x720</item>
         <item>1024x768</item>
