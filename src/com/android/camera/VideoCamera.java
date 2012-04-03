@@ -185,8 +185,6 @@ public class VideoCamera extends ActivityBase
     private boolean mOpenCameraFail = false;
     private boolean mCameraDisabled = false;
 
-    boolean mUnsupportedResolution = false;
-
     private long mStorageSpace;
 
     private MediaRecorder mMediaRecorder;
@@ -1199,19 +1197,6 @@ public class VideoCamera extends ActivityBase
         Intent intent = getIntent();
         Bundle myExtras = intent.getExtras();
 
-        videoWidth = mProfile.videoFrameWidth;
-        videoHeight = mProfile.videoFrameHeight;
-        mUnsupportedResolution = false;
-
-        if (mVideoEncoder == MediaRecorder.VideoEncoder.H263) {
-            if (videoWidth >= 1280 && videoHeight >= 720) {
-                    mUnsupportedResolution = true;
-                    Toast.makeText(VideoCamera.this, R.string.error_app_unsupported,
-                    Toast.LENGTH_LONG).show();
-                    return;
-            }
-        }
-
         long requestedSizeLimit = 0;
         closeVideoFileDescriptor();
         if (mIsVideoCaptureIntent && myExtras != null) {
@@ -1601,10 +1586,6 @@ public class VideoCamera extends ActivityBase
             }
         } else {
             initializeRecorder();
-            if (mUnsupportedResolution == true) {
-                Log.v(TAG, "Unsupported Resolution according to target");
-                return;
-            }
             if (mMediaRecorder == null) {
                 Log.e(TAG, "Fail to initialize media recorder");
                 return;
