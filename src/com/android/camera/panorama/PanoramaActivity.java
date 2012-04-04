@@ -171,7 +171,7 @@ public class PanoramaActivity extends ActivityBase implements
     // getting a better image quality by the former.
     private String mTargetFocusMode = Parameters.FOCUS_MODE_INFINITY;
 
-    static final String RESOLUTION_PROPERTY = "ro.camerahal.preoperties";
+    static final String RESOLUTION_PROPERTY = "ro.camhal.props";
 
     private PanoOrientationEventListener mOrientationEventListener;
     // The value could be 0, 90, 180, 270 for the 4 different orientations measured in clockwise
@@ -410,8 +410,8 @@ public class PanoramaActivity extends ActivityBase implements
                 }
             }
         } else {
-            mPreviewWidth = 320;
-            mPreviewHeight = 240;
+            mPreviewWidth = 640;
+            mPreviewHeight = 480;
         }
         Log.v(TAG, "preview h = " + mPreviewHeight + " , w = " + mPreviewWidth);
         parameters.setPreviewSize(mPreviewWidth, mPreviewHeight);
