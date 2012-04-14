@@ -35,9 +35,11 @@ public class Storage {
     public static final String DCIM =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
 
+    public static final String E_DCIM = "/mnt/emmc/DCIM";
+
     public static final String DIRECTORY = DCIM + "/Camera";
 
-    public static final String RAW_DIRECTORY = DCIM + "/Camera/raw";
+    public static final String E_DIRECTORY = E_DCIM + "/Camera";
 
     // Match the code in MediaProvider.computeBucketValues().
     public static final String BUCKET_ID =
@@ -53,25 +55,24 @@ public class Storage {
 
     private static final int BUFSIZE = 4096;
 
-    public static Uri addImage(ContentResolver resolver, String title, String pictureFormat, long date,
-                Location location, int orientation, byte[] jpeg, int width, int height) {
+    public static Uri addImage(ContentResolver resolver, boolean place, String title, String pictureFormat, long date, Location location, int orientation, byte[] jpeg, int width, int height) {
         // Save the image.
-        //String path = generateFilepath(title);
-        String directory = null;
         String ext = null;
+        String directory = null;
         if (pictureFormat == null ||
             pictureFormat.equalsIgnoreCase("jpeg")) {
+            directory = "";
             ext = ".jpg";
-            directory = DIRECTORY;
         } else if (pictureFormat.equalsIgnoreCase("raw")) {
+            directory = "raw/";
             ext = ".raw";
-            directory = RAW_DIRECTORY;
         } else {
             Log.e(TAG, "Invalid pictureFormat " + pictureFormat);
             return null;
         }
+        String fullImage = directory + title + ext;
+        String path = generateFilepath(place, fullImage);
 
-        String path = directory + '/' + title + ext;
         FileOutputStream out = null;
         try {
             File dir = new File(directory);
@@ -118,9 +119,17 @@ public class Storage {
         }
         return uri;
     }
+	
+    public static String storagePathBuilder(boolean external){
+    	String path = null;
+	path = external ? E_DIRECTORY : DIRECTORY;
+	if(external)
+	   new File(E_DCIM).mkdirs();
+	return path;
+    }
 
-    public static String generateFilepath(String title) {
-        return DIRECTORY + '/' + title + ".jpg";
+    public static String generateFilepath(boolean place, String title) {
+        return storagePathBuilder(place) + '/' + title;
     }
 
     public static long getAvailableSpace() {

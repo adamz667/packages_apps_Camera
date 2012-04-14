@@ -381,9 +381,8 @@ public class Camera extends ActivityBase implements FocusManager.Listener,
         mOrientationListener = new MyOrientationEventListener(Camera.this);
         mOrientationListener.enable();
 
-        // Initialize location sevice.
-        boolean recordLocation = RecordLocationPreference.get(
-                mPreferences, getContentResolver());
+        // Initialize location service.
+        boolean recordLocation = RecordLocationPreference.get(mPreferences, getContentResolver());
         initOnScreenIndicator();
         mLocationManager.recordLocation(recordLocation);
 
@@ -519,7 +518,7 @@ public class Camera extends ActivityBase implements FocusManager.Listener,
         mZoomControl.setSmoothZoomSupported(mSmoothZoomSupported);
         mZoomControl.setOnZoomChangeListener(new ZoomChangeListener());
         mCameraDevice.setZoomChangeListener(mZoomListener);
-    }
+      }
 
     private void onZoomValueChanged(int index) {
         // Not useful to change zoom value when the activity is paused.
@@ -1017,8 +1016,8 @@ public class Camera extends ActivityBase implements FocusManager.Listener,
             String pictureFormat = mParameters.get(KEY_PICTURE_FORMAT);
             String title = Util.createJpegName(dateTaken);
             int orientation = Exif.getOrientation(data);
-            Uri uri = Storage.addImage(mContentResolver, title, pictureFormat,
-                    dateTaken, loc, orientation, data, width, height);
+	   boolean eStorage = !mPreferences.getString(CameraSettings.KEY_EXTERNAL_STORAGE, "off").equals("off");
+            Uri uri = Storage.addImage(mContentResolver, eStorage, title, pictureFormat, dateTaken, loc, orientation, data, width, height);
             if (uri != null) {
                 boolean needThumbnail;
                 synchronized (this) {
@@ -1286,8 +1285,9 @@ public class Camera extends ActivityBase implements FocusManager.Listener,
                 CameraSettings.KEY_SCENE_MODE};
         final String[] OTHER_SETTING_KEYS = {
                 CameraSettings.KEY_RECORD_LOCATION,
-                CameraSettings.KEY_PICTURE_FORMAT,
                 CameraSettings.KEY_POWER_SHUTTER,
+                CameraSettings.KEY_PICTURE_FORMAT,
+                CameraSettings.KEY_EXTERNAL_STORAGE,
                 CameraSettings.KEY_PICTURE_SIZE,
                 CameraSettings.KEY_FOCUS_MODE,
                 CameraSettings.KEY_FORCE_PREVIEW};
@@ -1684,9 +1684,11 @@ public class Camera extends ActivityBase implements FocusManager.Listener,
 
     @Override
     public void autoFocus() {
-        mFocusStartTime = System.currentTimeMillis();
-        mCameraDevice.autoFocus(mAutoFocusCallback);
-        setCameraState(FOCUSING);
+        if(mCameraState != SNAPSHOT_IN_PROGRESS) {
+            mFocusStartTime = System.currentTimeMillis();
+            mCameraDevice.autoFocus(mAutoFocusCallback);
+            setCameraState(FOCUSING);
+        }
     }
 
     @Override
@@ -1791,19 +1793,19 @@ public class Camera extends ActivityBase implements FocusManager.Listener,
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_FOCUS:
-                if (mFirstTimeInitialized && event.getRepeatCount() == 0) {
+                if (mFirstTimeInitialized && (event.getRepeatCount() == 0)) {
                     onShutterButtonFocus(true);
                 }
                 return true;
             case KeyEvent.KEYCODE_CAMERA:
-                if (mFirstTimeInitialized && event.getRepeatCount() == 0) {
+                if (mFirstTimeInitialized && (event.getRepeatCount() == 0)) {
                     onShutterButtonClick();
                 }
                 return true;
             case KeyEvent.KEYCODE_DPAD_CENTER:
                 // If we get a dpad center event without any focused view, move
                 // the focus to the shutter button and press it.
-                if (mFirstTimeInitialized && event.getRepeatCount() == 0) {
+                if (mFirstTimeInitialized && (event.getRepeatCount() == 0)) {
                     // Start auto-focus immediately to reduce shutter lag. After
                     // the shutter button gets the focus, onShutterButtonFocus()
                     // will be called again but it is fine.
@@ -1818,7 +1820,7 @@ public class Camera extends ActivityBase implements FocusManager.Listener,
                 }
                 return true;
             case KeyEvent.KEYCODE_POWER:
-                if (mFirstTimeInitialized && event.getRepeatCount() == 0 && powerShutter(mPreferences)) {
+                if (mFirstTimeInitialized && (event.getRepeatCount() == 0) && powerShutter(mPreferences)) {
                     onShutterButtonFocus(true);
                 }
                 return true;
