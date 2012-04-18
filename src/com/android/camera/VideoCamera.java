@@ -124,10 +124,6 @@ public class VideoCamera extends ActivityBase
             CamcorderProfile.QUALITY_1080P,
             CamcorderProfile.QUALITY_720P,
             CamcorderProfile.QUALITY_480P,
-            CamcorderProfile.QUALITY_FWVGA,
-            CamcorderProfile.QUALITY_WVGA,
-            CamcorderProfile.QUALITY_VGA,
-            CamcorderProfile.QUALITY_WQVGA,
             CamcorderProfile.QUALITY_CIF,
             CamcorderProfile.QUALITY_QVGA,
             CamcorderProfile.QUALITY_QCIF};
@@ -271,10 +267,6 @@ public class VideoCamera extends ActivityBase
     private int mTargetZoomValue;
     private ZoomControl mZoomControl;
     private final ZoomListener mZoomListener = new ZoomListener();
-
-    private boolean mRestartPreview = false;
-    private int videoWidth; 
-    private int videoHeight;
 
     // This Handler is used to post message back onto the main thread of the
     // application
@@ -1148,11 +1140,7 @@ public class VideoCamera extends ActivityBase
         // display rotation in onCreate may not be what we want.
         if (mPreviewing && (Util.getDisplayRotation(this) == mDisplayRotation)
                 && holder.isCreating()) {
-            if (forcePreview(mPreferences)) {
-                startPreview();
-            } else {
-                setPreviewDisplay(holder);
-            }
+            setPreviewDisplay(holder);
         } else {
             stopVideoRecording();
             startPreview();
@@ -1444,8 +1432,7 @@ public class VideoCamera extends ActivityBase
         // Used when emailing.
         String filename = title + convertOutputFormatToFileExt(outputFileFormat);
         String mime = convertOutputFormatToMimeType(outputFileFormat);
-	boolean eStorage = !mPreferences.getString(CameraSettings.KEY_EXTERNAL_STORAGE, "off").equals("off");
-        mVideoFilename = Storage.storagePathBuilder(eStorage) + '/' + filename;
+        mVideoFilename = Storage.DIRECTORY + '/' + filename;
         mCurrentVideoValues = new ContentValues(7);
         mCurrentVideoValues.put(Video.Media.TITLE, title);
         mCurrentVideoValues.put(Video.Media.DISPLAY_NAME, filename);
@@ -2200,20 +2187,10 @@ public class VideoCamera extends ActivityBase
             } else {
                 readVideoPreferences();
                 showTimeLapseUI(mCaptureTimeLapse);
-
-                //To restart the preview even if record size changes..
-                //Remove once HAL change is ready
-                if(mProfile.videoFrameWidth != videoWidth ||
-                   mProfile.videoFrameHeight != videoHeight ) {
-                    videoWidth = mProfile.videoFrameWidth;
-                    videoHeight = mProfile.videoFrameHeight;
-                    mRestartPreview = true;
-                }
-
                 // We need to restart the preview if preview size is changed.
                 Size size = mParameters.getPreviewSize();
                 if (size.width != mDesiredPreviewWidth
-                        || size.height != mDesiredPreviewHeight || mRestartPreview) {
+                        || size.height != mDesiredPreviewHeight) {
                     if (!effectsActive()) {
                         mCameraDevice.stopPreview();
                     } else {
@@ -2221,7 +2198,6 @@ public class VideoCamera extends ActivityBase
                     }
                     resizeForPreviewAspectRatio();
                     startPreview(); // Parameters will be set in startPreview().
-                    mRestartPreview = false;
                 } else {
                     setCameraParameters();
                 }
@@ -2273,18 +2249,9 @@ public class VideoCamera extends ActivityBase
     private void checkQualityAndStartPreview() {
         readVideoPreferences();
         showTimeLapseUI(mCaptureTimeLapse);
-
-        //To restart the preview even if record size changes..
-        //Remove once HAL change is ready
-        if(mProfile.videoFrameWidth != videoWidth || mProfile.videoFrameHeight != videoHeight ) {
-            videoWidth = mProfile.videoFrameWidth;
-            videoHeight = mProfile.videoFrameHeight;
-            mRestartPreview = true;
-        }
-
         Size size = mParameters.getPreviewSize();
         if (size.width != mDesiredPreviewWidth
-                || size.height != mDesiredPreviewHeight || mRestartPreview) {
+                || size.height != mDesiredPreviewHeight) {
             resizeForPreviewAspectRatio();
         } else {
             // Start up preview again
@@ -2498,8 +2465,8 @@ public class VideoCamera extends ActivityBase
         String title = Util.createJpegName(dateTaken);
         int orientation = Exif.getOrientation(data);
         Size s = mParameters.getPictureSize();
-	boolean eStorage = !mPreferences.getString(CameraSettings.KEY_EXTERNAL_STORAGE, "off").equals("off");
-        Uri uri = Storage.addImage(mContentResolver, eStorage, title, null, dateTaken, loc, orientation, data, s.width, s.height);
+        Uri uri = Storage.addImage(mContentResolver, title, dateTaken, loc, orientation, data,
+                s.width, s.height);
         if (uri != null) {
             // Create a thumbnail whose width is equal or bigger than that of the preview.
             int ratio = (int) Math.ceil((double) mParameters.getPictureSize().width

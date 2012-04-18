@@ -131,9 +131,6 @@ public class Camera extends ActivityBase implements FocusManager.Listener,
     private boolean mStartZoom = false;
     private float oldDistance = 1f;
 
-    private boolean mStartZoom = false;
-    private float oldDistance = 1f;
-
     private Parameters mParameters;
     private Parameters mInitialParams;
     private boolean mFocusAreaSupported;
@@ -180,11 +177,6 @@ public class Camera extends ActivityBase implements FocusManager.Listener,
     // mCropValue and mSaveUri are used only if isImageCaptureIntent() is true.
     private String mCropValue;
     private Uri mSaveUri;
-
-    // Constant from android.hardware.Camera.Parameters
-    private static final String KEY_PICTURE_FORMAT = "picture-format";
-    private static final String PIXEL_FORMAT_JPEG = "jpeg";
-    private static final String PIXEL_FORMAT_RAW = "raw";
 
     // Small indicators which show the camera settings in the viewfinder.
     private TextView mExposureIndicator;
@@ -354,7 +346,6 @@ public class Camera extends ActivityBase implements FocusManager.Listener,
                     }
                     break;
                 }
-
                 case CAMERA_TIMER: {
                     updateTimer(msg.arg1);
                     break;
@@ -534,6 +525,7 @@ public class Camera extends ActivityBase implements FocusManager.Listener,
         mZoomControl.setSmoothZoomSupported(mSmoothZoomSupported);
         mZoomControl.setOnZoomChangeListener(new ZoomChangeListener());
         mCameraDevice.setZoomChangeListener(mZoomListener);
+        
         // Initialize volume zoom.
         mVolumeZoom = VolumeZoomPreference.get(mPreferences, mContentResolver);
     }
@@ -1045,11 +1037,10 @@ public class Camera extends ActivityBase implements FocusManager.Listener,
         // Runs in saver thread
         private void storeImage(final byte[] data, Location loc, int width,
                 int height, long dateTaken, int previewWidth) {
-            String pictureFormat = mParameters.get(KEY_PICTURE_FORMAT);
             String title = Util.createJpegName(dateTaken);
             int orientation = Exif.getOrientation(data);
-	   boolean eStorage = !mPreferences.getString(CameraSettings.KEY_EXTERNAL_STORAGE, "off").equals("off");
-            Uri uri = Storage.addImage(mContentResolver, eStorage, title, pictureFormat, dateTaken, loc, orientation, data, width, height);
+            Uri uri = Storage.addImage(mContentResolver, title, dateTaken,
+                    loc, orientation, data, width, height);
             if (uri != null) {
                 boolean needThumbnail;
                 synchronized (this) {
@@ -1104,12 +1095,7 @@ public class Camera extends ActivityBase implements FocusManager.Listener,
 
         // Set rotation and gps data.
         Util.setRotationParameter(mParameters, mCameraId, mOrientation);
-        String pictureFormat = mParameters.get(KEY_PICTURE_FORMAT);
-        Location loc = null;
-        if (pictureFormat != null &&
-            PIXEL_FORMAT_JPEG.equalsIgnoreCase(pictureFormat)) {
-            loc = mLocationManager.getCurrentLocation();
-        }
+        Location loc = mLocationManager.getCurrentLocation();
         Util.setGpsParameters(mParameters, loc);
         mCameraDevice.setParameters(mParameters);
 
@@ -1753,11 +1739,9 @@ public class Camera extends ActivityBase implements FocusManager.Listener,
 
     @Override
     public void autoFocus() {
-        if(mCameraState != SNAPSHOT_IN_PROGRESS) {
-            mFocusStartTime = System.currentTimeMillis();
-            mCameraDevice.autoFocus(mAutoFocusCallback);
-            setCameraState(FOCUSING);
-        }
+        mFocusStartTime = System.currentTimeMillis();
+        mCameraDevice.autoFocus(mAutoFocusCallback);
+        setCameraState(FOCUSING);
     }
 
     @Override
@@ -1978,11 +1962,7 @@ public class Camera extends ActivityBase implements FocusManager.Listener,
                 // Set preview display if the surface is being created and preview
                 // was already started. That means preview display was set to null
                 // and we need to set it now.
-                if (forcePreview(mPreferences)) {
-                    startPreview();
-                } else {
-                    setPreviewDisplay(holder);
-                }
+                setPreviewDisplay(holder);
             }
         }
 
@@ -2134,11 +2114,11 @@ public class Camera extends ActivityBase implements FocusManager.Listener,
             mParameters.setAutoWhiteBalanceLock(mFocusManager.getAeAwbLock());
         }
 
-        if (mFocusAreaSupported && mFocusManager.getFocusAreas() != null) {
+        if (mFocusAreaSupported) {
             mParameters.setFocusAreas(mFocusManager.getFocusAreas());
         }
 
-        if (mMeteringAreaSupported && mFocusManager.getMeteringAreas() != null) {
+        if (mMeteringAreaSupported) {
             // Use the same area for focus and metering.
             mParameters.setMeteringAreas(mFocusManager.getMeteringAreas());
         }
@@ -2206,14 +2186,6 @@ public class Camera extends ActivityBase implements FocusManager.Listener,
                 mSceneMode = Parameters.SCENE_MODE_AUTO;
             }
         }
-
-        // Set Picture Format
-        // Picture Formats specified in UI should be consistent with
-        // PIXEL_FORMAT_JPEG and PIXEL_FORMAT_RAW constants
-        String pictureFormat = mPreferences.getString(
-        CameraSettings.KEY_PICTURE_FORMAT,
-        getString(R.string.pref_camera_picture_format_default));
-        mParameters.set(KEY_PICTURE_FORMAT, pictureFormat);
 
         // Set JPEG quality.
         int jpegQuality = CameraProfile.getJpegEncodingQualityParameter(mCameraId,
