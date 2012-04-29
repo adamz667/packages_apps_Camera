@@ -44,8 +44,6 @@ public class Storage {
     // Match the code in MediaProvider.computeBucketValues().
     public static final String BUCKET_ID =
             String.valueOf(DIRECTORY.toLowerCase().hashCode());
-    public static final String CAMERA_RAW_IMAGE_BUCKET_ID =
-            String.valueOf(RAW_DIRECTORY.toLowerCase().hashCode());
 
     public static final long UNAVAILABLE = -1L;
     public static final long PREPARING = -2L;
