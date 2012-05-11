@@ -7,9 +7,11 @@
     <original-package android:name="com.android.camera" />
 
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
-
+    <uses-feature android:name="android.hardware.camera.flash" />
+    
     <uses-permission android:name="android.permission.PREVENT_POWER_KEY" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
@@ -17,7 +19,7 @@
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_SMS" />
-
+    
     <application android:icon="@mipmap/ic_launcher_camera"
             android:name="com.android.camera.CameraAppImpl"
             android:label="@string/camera_label"
