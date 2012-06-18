@@ -44,6 +44,7 @@ public class CameraSettings {
     public static final String KEY_PICTURE_SIZE = "pref_camera_picturesize_key";
     public static final String KEY_JPEG_QUALITY = "pref_camera_jpegquality_key";
     public static final String KEY_FOCUS_MODE = "pref_camera_focusmode_key";
+    public static final String KEY_TIMER_MODE = "pref_camera_timer_key";
     public static final String KEY_FLASH_MODE = "pref_camera_flashmode_key";
     public static final String KEY_VIDEOCAMERA_FLASH_MODE = "pref_camera_video_flashmode_key";
     public static final String KEY_WHITE_BALANCE = "pref_camera_whitebalance_key";
@@ -54,10 +55,7 @@ public class CameraSettings {
     public static final String KEY_CAMERA_FIRST_USE_HINT_SHOWN = "pref_camera_first_use_hint_shown_key";
     public static final String KEY_VIDEO_FIRST_USE_HINT_SHOWN = "pref_video_first_use_hint_shown_key";
     public static final String KEY_POWER_SHUTTER = "pref_power_shutter";
-    public static final String KEY_PICTURE_FORMAT = "pref_camera_pictureformat_key";
-    public static final String KEY_EXTERNAL_STORAGE = "pref_external_storage";
-
-    static final String RESOLUTION_PROPERTY = "ro.camhal.props";
+    public static final String KEY_VOLUME_ZOOM = VolumeZoomPreference.KEY;
 
     public static final String EXPOSURE_DEFAULT_VALUE = "0";
 
@@ -364,6 +362,11 @@ public class CameraSettings {
                     pref.getBoolean(KEY_RECORD_LOCATION, false)
                     ? CameraSettings.VALUE_ON
                     : RecordLocationPreference.VALUE_NONE);
+            
+            editor.putString(KEY_VOLUME_ZOOM,
+                    pref.getBoolean(KEY_VOLUME_ZOOM, false)
+                    ? CameraSettings.VALUE_ON
+                    : VolumeZoomPreference.VALUE_NONE);
             version = 3;
         }
         if (version == 3) {

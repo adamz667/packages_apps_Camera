@@ -95,14 +95,26 @@
     <!-- In select camera setting, front-facing camera. [CHAR LIMIT=14] -->
     <string name="pref_camera_id_entry_front">Front</string>
 
-    <!-- Settings screen, setting title text -->
-    <string name="pref_camera_recordlocation_title">Store location</string>
+    <!-- More Settings screen, power button title -->
+    <string name="pref_camera_power_shutter_title">Power shutter</string>
+    <string name="pref_camera_power_shutter_default">Off</string>
 
+    <!-- More Settings screen, record location title text -->
+    <string name="pref_camera_recordlocation_title">Store location</string>
     <string name="pref_camera_recordlocation_default" translatable="false">none</string>
 
-    <!-- Settings screen, Record location dialog choices -->
+    <!-- More Settings screen, record location dialog choices -->
     <string name="pref_camera_recordlocation_entry_off">Off</string>
     <string name="pref_camera_recordlocation_entry_on">On</string>
+    
+    <!-- More Settings screen, volume zoom setting title text -->
+    <string name="pref_camera_volumezoom_title">Volume zoom</string>
+    
+    <string name="pref_camera_volumezoom_default" translatable="false">none</string>
+    
+    <!-- More Settings screen, Volume zoom dialog choices -->
+    <string name="pref_camera_volumezoom_entry_off">Off</string>
+    <string name="pref_camera_volumezoom_entry_on">On</string>
 
     <!-- The Video quality settings in preference [CHAR LIMIT=21] -->
     <string name="pref_video_quality_title">Video quality</string>
@@ -188,29 +200,28 @@
     <string name="pref_camera_picturesize_entry_320x240">QVGA</string>
     <string name="pref_camera_picturesize_entry_176x144">QCIF</string>
 
-    <!-- Default Picture format setting. Do not translate. -->
-    <string name="pref_camera_picture_format_default">jpeg</string>
-    
-    <!-- Settings screen, Select Picture format title -->
-    <string name="pref_camera_picture_format_title">Select Picture Format</string>
-    
-    <!-- Settings screen, picture format dialog radio button choices -->
-    <string name="pref_camera_picture_format_entry_jpeg">Jpeg</string>
-    <string name="pref_camera_picture_format_entry_raw">Raw</string>
-    
-    <!-- Picture format entry values. Do not translate. -->
-    <string name="pref_camera_picture_format_value_jpeg">jpeg</string>
-    <string name="pref_camera_picture_format_value_raw">raw</string>
-
     <!-- Settings screen, Focus mode title -->
     <string name="pref_camera_focusmode_title">Focus mode</string>
 
-    <!-- Settings screen, Focue mode dialog radio button choices -->
+    <!-- Settings screen, Focus mode dialog radio button choices -->
     <string name="pref_camera_focusmode_entry_auto">Auto</string>
     <string name="pref_camera_focusmode_entry_infinity">Infinity</string>
     <string name="pref_camera_focusmode_entry_macro">Macro</string>
     <string name="pref_camera_focusmode_entry_fixed">Fixed</string>
     <string name="pref_camera_focusmode_entry_facedetect">Face detect</string>
+
+    <!-- Settings screen, Timer mode title -->
+    <string name="pref_camera_timer_title">Timer mode</string>
+    <string name="pref_camera_timer_default" translatable="false">0</string>
+
+    <!-- Settings screen, Timer mode entries -->
+    <string name="pref_camera_timer_entry_0">off</string>
+    <string name="pref_camera_timer_entry_10">10s</string>
+    <string name="pref_camera_timer_entry_20">20s</string>
+    <string name="pref_camera_timer_entry_30">30s</string>
+    <string name="pref_camera_timer_entry_40">40s</string>
+    <string name="pref_camera_timer_entry_50">50s</string>
+    <string name="pref_camera_timer_entry_60">60s</string>
 
     <!-- Default flash mode setting.-->
     <string name="pref_camera_flashmode_default" translatable="false">auto</string>
@@ -263,13 +274,6 @@
     <string name="pref_camera_scenemode_entry_duskdawn">Duskdawn</string>
     <string name="pref_camera_scenemode_entry_fallcolor">Fallcolor</string>
     <string name="pref_camera_scenemode_entry_text">Text</string>
-    <string name="pref_camera_scenemode_entry_portrait">Portrait</string>
-    <string name="pref_camera_scenemode_entry_landscape">Landscape</string>
-    <string name="pref_camera_scenemode_entry_beach">Beach</string>
-    <string name="pref_camera_scenemode_entry_snow">Snow</string>
-    <string name="pref_camera_scenemode_entry_fireworks">Fireworks</string>
-    <string name="pref_camera_scenemode_entry_sports">Sports</string>
-    <string name="pref_camera_scenemode_entry_candlelight">Candlelight</string>
 
     <!-- Toast after trying to select a setting that is not allowed to change in scene mode [CHAR LIMIT=NONE] -->
     <string name="not_selectable_in_scene_mode">Not selectable in scene mode.</string>
