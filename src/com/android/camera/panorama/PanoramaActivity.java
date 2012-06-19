@@ -60,7 +60,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.ParcelFileDescriptor;
 import android.os.PowerManager;
-import android.os.SystemProperties;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -170,8 +169,6 @@ public class PanoramaActivity extends ActivityBase implements
     // Prefer FOCUS_MODE_INFINITY to FOCUS_MODE_CONTINUOUS_VIDEO because of
     // getting a better image quality by the former.
     private String mTargetFocusMode = Parameters.FOCUS_MODE_INFINITY;
-
-    static final String RESOLUTION_PROPERTY = "ro.camhal.props";
 
     private PanoOrientationEventListener mOrientationEventListener;
     // The value could be 0, 90, 180, 270 for the 4 different orientations measured in clockwise
@@ -371,8 +368,6 @@ public class PanoramaActivity extends ActivityBase implements
         mCameraOrientation = Util.getCameraOrientation(backCameraId);
     }
 
-    boolean mResolutionOverride = SystemProperties.get(RESOLUTION_PROPERTY).equalsIgnoreCase("true");
-
     private boolean findBestPreviewSize(List<Size> supportedSizes, boolean need4To3,
             boolean needSmaller) {
         int pixelsDiff = DEFAULT_CAPTURE_PIXELS;
@@ -400,18 +395,13 @@ public class PanoramaActivity extends ActivityBase implements
     }
 
     private void setupCaptureParams(Parameters parameters) {
-        if (mResolutionOverride) {
-            List<Size> supportedSizes = parameters.getSupportedPreviewSizes();
-            if (!findBestPreviewSize(supportedSizes, true, true)) {
-                Log.w(TAG, "No 4:3 ratio preview size supported.");
-                if (!findBestPreviewSize(supportedSizes, false, true)) {
-                    Log.w(TAG, "Can't find a supported preview size smaller than 960x720.");
-                    findBestPreviewSize(supportedSizes, false, false);
-                }
+        List<Size> supportedSizes = parameters.getSupportedPreviewSizes();
+        if (!findBestPreviewSize(supportedSizes, true, true)) {
+            Log.w(TAG, "No 4:3 ratio preview size supported.");
+            if (!findBestPreviewSize(supportedSizes, false, true)) {
+                Log.w(TAG, "Can't find a supported preview size smaller than 960x720.");
+                findBestPreviewSize(supportedSizes, false, false);
             }
-        } else {
-            mPreviewWidth = 640;
-            mPreviewHeight = 480;
         }
         Log.v(TAG, "preview h = " + mPreviewHeight + " , w = " + mPreviewWidth);
         parameters.setPreviewSize(mPreviewWidth, mPreviewHeight);
@@ -963,9 +953,10 @@ public class PanoramaActivity extends ActivityBase implements
         if (jpegData != null) {
             String filename = PanoUtil.createName(
                     getResources().getString(R.string.pano_file_name_format), mTimeTaken);
-            Uri uri = Storage.addImage(getContentResolver(), false, filename, null, mTimeTaken, null, orientation, jpegData, width, height);
+            Uri uri = Storage.addImage(getContentResolver(), filename, mTimeTaken, null,
+                    orientation, jpegData, width, height);
             if (uri != null && orientation != 0) {
-                String filepath = Storage.generateFilepath(false ,filename);
+                String filepath = Storage.generateFilepath(filename);
                 try {
                     // Save the orientation in EXIF.
                     ExifInterface exif = new ExifInterface(filepath);

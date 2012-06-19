@@ -75,18 +75,6 @@ abstract public class ActivityBase extends Activity {
         }
     }
 
-    protected boolean powerShutter(ComboPreferences prefs) {
-        prefs.setLocalId(getApplicationContext(), 0);
-        String val = prefs.getString(CameraSettings.KEY_POWER_SHUTTER,
-                getResources().getString(R.string.pref_camera_power_shutter_default));
-        if (val.equals(CameraSettings.VALUE_ON)){
-            getWindow().addFlags(WindowManager.LayoutParams.PREVENT_POWER_KEY);
-            return true;
-        }else{
-            getWindow().clearFlags(WindowManager.LayoutParams.PREVENT_POWER_KEY);
-            return false;
-        }
-    }
     protected boolean forcePreview(ComboPreferences prefs) {
         prefs.setLocalId(getApplicationContext(), 0);
         String val = prefs.getString(CameraSettings.KEY_FORCE_PREVIEW,

@@ -92,12 +92,9 @@
 
     <!-- In select camera setting, back facing camera. [CHAR LIMIT=14] -->
     <string name="pref_camera_id_entry_back">Back</string>
+
     <!-- In select camera setting, front-facing camera. [CHAR LIMIT=14] -->
     <string name="pref_camera_id_entry_front">Front</string>
-
-    <!-- More Settings screen, power button title -->
-    <string name="pref_camera_power_shutter_title">Power shutter</string>
-    <string name="pref_camera_power_shutter_default">Off</string>
 
     <!-- More Settings screen, record location title text -->
     <string name="pref_camera_recordlocation_title">Store location</string>
@@ -167,22 +164,6 @@
     <!-- More Settings screen, force preview title -->
     <string name="pref_camera_force_preview_title">Force preview</string>
     <string name="pref_camera_force_preview_default">on</string>
-
-    <!-- More Settings screen, External Storage title -->
-    <string name="pref_camera_power_storage_title">External SD</string>
-    <string name="pref_camera_storage_default">off</string>
-
-    <!-- More Settings screen, force preview title -->
-    <string name="pref_camera_force_preview_title">Force preview</string>
-    <string name="pref_camera_force_preview_default">off</string>
-
-    <!-- More Settings screen, force preview title -->
-    <string name="pref_camera_force_preview_title">Force preview</string>
-    <string name="pref_camera_force_preview_default">off</string>
-
-    <!-- More Settings screen, force preview title -->
-    <string name="pref_camera_force_preview_title">Force preview</string>
-    <string name="pref_camera_force_preview_default">off</string>
 
     <!-- Settings screen, Picture size title -->
     <string name="pref_camera_picturesize_title">Picture size</string>

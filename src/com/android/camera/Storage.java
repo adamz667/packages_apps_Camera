@@ -35,11 +35,7 @@ public class Storage {
     public static final String DCIM =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
 
-    public static final String E_DCIM = "/mnt/emmc/DCIM";
-
     public static final String DIRECTORY = DCIM + "/Camera";
-
-    public static final String E_DIRECTORY = E_DCIM + "/Camera";
 
     // Match the code in MediaProvider.computeBucketValues().
     public static final String BUCKET_ID =
@@ -53,28 +49,12 @@ public class Storage {
 
     private static final int BUFSIZE = 4096;
 
-    public static Uri addImage(ContentResolver resolver, boolean place, String title, String pictureFormat, long date, Location location, int orientation, byte[] jpeg, int width, int height) {
+    public static Uri addImage(ContentResolver resolver, String title, long date,
+                Location location, int orientation, byte[] jpeg, int width, int height) {
         // Save the image.
-        String ext = null;
-        String directory = null;
-        if (pictureFormat == null ||
-            pictureFormat.equalsIgnoreCase("jpeg")) {
-            directory = "";
-            ext = ".jpg";
-        } else if (pictureFormat.equalsIgnoreCase("raw")) {
-            directory = "raw/";
-            ext = ".raw";
-        } else {
-            Log.e(TAG, "Invalid pictureFormat " + pictureFormat);
-            return null;
-        }
-        String fullImage = directory + title + ext;
-        String path = generateFilepath(place, fullImage);
-
+        String path = generateFilepath(title);
         FileOutputStream out = null;
         try {
-            File dir = new File(directory);
-            if (!dir.exists()) dir.mkdirs();
             out = new FileOutputStream(path);
             out.write(jpeg);
         } catch (Exception e) {
@@ -90,7 +70,7 @@ public class Storage {
         // Insert into MediaStore.
         ContentValues values = new ContentValues(9);
         values.put(ImageColumns.TITLE, title);
-        values.put(ImageColumns.DISPLAY_NAME, title + ext);
+        values.put(ImageColumns.DISPLAY_NAME, title + ".jpg");
         values.put(ImageColumns.DATE_TAKEN, date);
         values.put(ImageColumns.MIME_TYPE, "image/jpeg");
         values.put(ImageColumns.ORIENTATION, orientation);
@@ -117,17 +97,9 @@ public class Storage {
         }
         return uri;
     }
-	
-    public static String storagePathBuilder(boolean external){
-    	String path = null;
-	path = external ? E_DIRECTORY : DIRECTORY;
-	if(external)
-	   new File(E_DCIM).mkdirs();
-	return path;
-    }
 
-    public static String generateFilepath(boolean place, String title) {
-        return storagePathBuilder(place) + '/' + title;
+    public static String generateFilepath(String title) {
+        return DIRECTORY + '/' + title + ".jpg";
     }
 
     public static long getAvailableSpace() {
