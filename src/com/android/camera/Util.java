@@ -86,6 +86,20 @@ public class Util {
     private static float sPixelDensity = 1;
     private static ImageFileNamer sImageFileNamer;
 
+    // For setting video size before recording starts
+    private static boolean sEarlyVideoSize;
+
+    // Samsung camcorder mode
+    private static boolean sSamsungCamMode;
+    private static boolean sSamsungCamSettings;
+
+    // Samsung ZSL mode
+    private static boolean sEnableZSL;
+
+    // Workaround for QC cameras with broken face detection on front camera
+    private static boolean sNoFaceDetectOnFrontCamera;
+    private static boolean sNoFaceDetectOnRearCamera;
+    
     private Util() {
     }
 
@@ -99,6 +113,38 @@ public class Util {
         sPixelDensity = metrics.density;
         sImageFileNamer = new ImageFileNamer(
                 context.getString(R.string.image_file_name_format));
+
+        // These come from the config, but are needed before parameters are set.
+        sEarlyVideoSize = context.getResources().getBoolean(R.bool.needsEarlyVideoSize);
+        sSamsungCamMode = context.getResources().getBoolean(R.bool.needsSamsungCamMode);
+        sSamsungCamSettings = context.getResources().getBoolean(R.bool.hasSamsungCamSettings);
+        sEnableZSL = context.getResources().getBoolean(R.bool.enableZSL);
+        sNoFaceDetectOnFrontCamera = context.getResources().getBoolean(R.bool.noFaceDetectOnFrontCamera);
+        sNoFaceDetectOnRearCamera = context.getResources().getBoolean(R.bool.noFaceDetectOnRearCamera);
+    }
+
+    public static boolean needsEarlyVideoSize() {
+        return sEarlyVideoSize;
+    }
+
+    public static boolean useSamsungCamMode() {
+        return sSamsungCamMode;
+    }
+
+    public static boolean useSamsungCamSettings() {
+        return sSamsungCamSettings;
+    }
+
+    public static boolean enableZSL() {
+        return sEnableZSL;
+    }
+
+    public static boolean noFaceDetectOnFrontCamera() {
+        return sNoFaceDetectOnFrontCamera;
+    }
+    
+    public static boolean noFaceDetectOnRearCamera() {
+        return sNoFaceDetectOnRearCamera;
     }
 
     public static boolean isTabletUI() {
@@ -373,12 +419,15 @@ public class Util {
 
     public static Size getOptimalPreviewSize(Activity currentActivity,
             List<Size> sizes, double targetRatio) {
-        // Not too small tolerance, some camera use 848, 854 or 864 for 480p
-        final double ASPECT_TOLERANCE = 0.05;
+
+        // Use a very small tolerance because we want an exact match.
+        final double ASPECT_TOLERANCE = 0.014;
+
         if (sizes == null) return null;
 
         Size optimalSize = null;
         double minDiff = Double.MAX_VALUE;
+        double minAspectRatioDiff = Double.MAX_VALUE;
 
         // Because of bugs of overlay and layout, we sometimes will try to
         // layout the viewfinder in the portrait orientation and thus get the
@@ -394,13 +443,22 @@ public class Util {
             targetHeight = display.getHeight();
         }
 
-        // Try to find an size match aspect ratio and size
+        // First in all sizes not greater than target size, find an aspect ratio
+        // that is closest to requested ratio
         for (Size size : sizes) {
             double ratio = (double) size.width / size.height;
-            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
-            if (Math.abs(size.height - targetHeight) < minDiff) {
-                optimalSize = size;
-                minDiff = Math.abs(size.height - targetHeight);
+            if (size.height <= targetHeight && Math.abs(ratio - targetRatio) < minAspectRatioDiff)
+                minAspectRatioDiff = Math.abs(ratio-targetRatio);
+        }
+        // Then find the size with minAspectRatioDiff closest to target size
+        for (Size size : sizes) {
+            double ratio = (double) size.width / size.height;
+            double aspectRatioDiff = Math.abs(ratio - targetRatio);
+            if (size.height <= targetHeight) {
+                if (aspectRatioDiff - minAspectRatioDiff > ASPECT_TOLERANCE)
+                    continue;
+                if (optimalSize == null || optimalSize.height < size.height)
+                    optimalSize = size;
             }
         }
 
@@ -417,6 +475,7 @@ public class Util {
             }
         }
         return optimalSize;
+
     }
 
     // Returns the largest picture size which matches the given aspect ratio.

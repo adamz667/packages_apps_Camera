@@ -65,7 +65,7 @@ public class OtherSettingsPopup extends AbstractSettingPopup
             // which applies the on/off switch.
             if (CameraSettings.KEY_POWER_SHUTTER.equals(pref.getKey()) ||
                     CameraSettings.KEY_RECORD_LOCATION.equals(pref.getKey()) ||
-                    CameraSettings.KEY_VOLUME_ZOOM.equals(pref.getKey())) {
+                    CameraSettings.KEY_FOCUS_SOUND.equals(pref.getKey())) {
                 return R.layout.in_line_setting_switch;
             }
             return R.layout.in_line_setting_knob;

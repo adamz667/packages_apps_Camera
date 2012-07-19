@@ -185,6 +185,7 @@ public class VideoCamera extends ActivityBase
     private boolean mOpenCameraFail = false;
     private boolean mCameraDisabled = false;
 
+    private String mStorage;
     private long mStorageSpace;
 
     private MediaRecorder mMediaRecorder;
@@ -367,6 +368,7 @@ public class VideoCamera extends ActivityBase
         mPreferences = new ComboPreferences(this);
         CameraSettings.upgradeGlobalPreferences(mPreferences.getGlobal());
         mCameraId = CameraSettings.readPreferredCameraId(mPreferences);
+        mStorage = CameraSettings.readStorage(mPreferences);
         powerShutter(mPreferences);
         //Testing purpose. Launch a specific camera through the intent extras.
         int intentCameraId = Util.getCameraFacingIntentExtras(this);
@@ -534,7 +536,7 @@ public class VideoCamera extends ActivityBase
         final String[] OTHER_SETTING_KEYS = {
                     CameraSettings.KEY_RECORD_LOCATION,
                     CameraSettings.KEY_POWER_SHUTTER,
-                    CameraSettings.KEY_VOLUME_ZOOM};
+                    CameraSettings.KEY_STORAGE};
 
         CameraPicker.setImageResourceId(R.drawable.ic_switch_video_facing_holo_light);
         mIndicatorControlContainer.initialize(this, mPreferenceGroup,
@@ -697,7 +699,7 @@ public class VideoCamera extends ActivityBase
     private OnScreenHint mStorageHint;
 
     private void updateAndShowStorageHint() {
-        mStorageSpace = Storage.getAvailableSpace();
+        mStorageSpace = Storage.getAvailableSpace(mStorage);
         showStorageHint();
     }
 
@@ -883,7 +885,7 @@ public class VideoCamera extends ActivityBase
         intentFilter.addDataScheme("file");
         mReceiver = new MyBroadcastReceiver();
         registerReceiver(mReceiver, intentFilter);
-        mStorageSpace = Storage.getAvailableSpace();
+        mStorageSpace = Storage.getAvailableSpace(mStorage);
 
         mHandler.postDelayed(new Runnable() {
             public void run() {
@@ -1167,7 +1169,7 @@ public class VideoCamera extends ActivityBase
     }
 
     private void gotoGallery() {
-        MenuHelper.gotoCameraVideoGallery(this);
+        MenuHelper.gotoCameraVideoGallery(this, Storage.generateBucketId(mStorage));
     }
 
     @Override
@@ -1224,6 +1226,9 @@ public class VideoCamera extends ActivityBase
 
         Intent intent = getIntent();
         Bundle myExtras = intent.getExtras();
+
+        videoWidth = mProfile.videoFrameWidth;
+        videoHeight = mProfile.videoFrameHeight;
 
         long requestedSizeLimit = 0;
         closeVideoFileDescriptor();
@@ -1444,8 +1449,7 @@ public class VideoCamera extends ActivityBase
         // Used when emailing.
         String filename = title + convertOutputFormatToFileExt(outputFileFormat);
         String mime = convertOutputFormatToMimeType(outputFileFormat);
-	boolean eStorage = !mPreferences.getString(CameraSettings.KEY_EXTERNAL_STORAGE, "off").equals("off");
-        mVideoFilename = Storage.storagePathBuilder(eStorage) + '/' + filename;
+        mVideoFilename = Storage.generateDirectory(mStorage) + '/' + filename;
         mCurrentVideoValues = new ContentValues(7);
         mCurrentVideoValues.put(Video.Media.TITLE, title);
         mCurrentVideoValues.put(Video.Media.DISPLAY_NAME, filename);
@@ -1814,7 +1818,8 @@ public class VideoCamera extends ActivityBase
 
     private void updateThumbnailButton() {
         if (mThumbnail == null || !Util.isUriValid(mThumbnail.getUri(), mContentResolver)) {
-            mThumbnail = Thumbnail.getLastThumbnail(mContentResolver);
+            mThumbnail = Thumbnail.getLastThumbnail(mContentResolver,
+                Storage.generateBucketId(mStorage));
         }
         if (mThumbnail != null) {
             mThumbnailView.setBitmap(mThumbnail.getBitmap());
@@ -1929,6 +1934,8 @@ public class VideoCamera extends ActivityBase
     }
 
     private void setCameraHardwareParameters() {
+        CameraSettings.dumpParameters(mParameters);
+
         mCameraDevice.setParameters(mParameters);
     }
 
@@ -2012,6 +2019,7 @@ public class VideoCamera extends ActivityBase
                 CameraProfile.QUALITY_HIGH);
         mParameters.setJpegQuality(jpegQuality);
 
+        CameraSettings.dumpParameters(mParameters);
         mCameraDevice.setParameters(mParameters);
         // Keep preview size up to date.
         mParameters = mCameraDevice.getParameters();
@@ -2177,6 +2185,12 @@ public class VideoCamera extends ActivityBase
             // Check if the current effects selection has changed
             if (updateEffectSelection()) return;
 
+            String storage = CameraSettings.readStorage(mPreferences);
+            if (!storage.equals(mStorage)) {
+                mStorage = storage;
+                updateAndShowStorageHint();
+            }
+
             // Check if camera id is changed.
             int cameraId = CameraSettings.readPreferredCameraId(mPreferences);
             if (mCameraId != cameraId) {
@@ -2286,10 +2300,9 @@ public class VideoCamera extends ActivityBase
         if (size.width != mDesiredPreviewWidth
                 || size.height != mDesiredPreviewHeight || mRestartPreview) {
             resizeForPreviewAspectRatio();
-        } else {
-            // Start up preview again
-            startPreview();
         }
+        // Start up preview
+        startPreview();
     }
 
     private void showTimeLapseUI(boolean enable) {
@@ -2468,6 +2481,7 @@ public class VideoCamera extends ActivityBase
         Util.setRotationParameter(mParameters, mCameraId, mOrientation);
         Location loc = mLocationManager.getCurrentLocation();
         Util.setGpsParameters(mParameters, loc);
+        CameraSettings.dumpParameters(mParameters);
         mCameraDevice.setParameters(mParameters);
 
         Log.v(TAG, "Video snapshot start");
@@ -2498,8 +2512,8 @@ public class VideoCamera extends ActivityBase
         String title = Util.createJpegName(dateTaken);
         int orientation = Exif.getOrientation(data);
         Size s = mParameters.getPictureSize();
-	boolean eStorage = !mPreferences.getString(CameraSettings.KEY_EXTERNAL_STORAGE, "off").equals("off");
-        Uri uri = Storage.addImage(mContentResolver, eStorage, title, null, dateTaken, loc, orientation, data, s.width, s.height);
+        Uri uri = Storage.addImage(mContentResolver, mStorage, title, dateTaken, loc, orientation, data,
+                s.width, s.height);
         if (uri != null) {
             // Create a thumbnail whose width is equal or bigger than that of the preview.
             int ratio = (int) Math.ceil((double) mParameters.getPictureSize().width

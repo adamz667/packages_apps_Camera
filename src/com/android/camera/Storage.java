@@ -126,12 +126,25 @@ public class Storage {
 	return path;
     }
 
-    public static String generateFilepath(boolean place, String title) {
-        return storagePathBuilder(place) + '/' + title;
+    public static String generateDCIM(String storage) {
+        return new File(storage, Environment.DIRECTORY_DCIM).toString();
     }
 
-    public static long getAvailableSpace() {
-        String state = Environment.getExternalStorageState();
+    public static String generateDirectory(String storage) {
+        return generateDCIM(storage) + "/Camera";
+    }
+
+    public static String generateFilepath(String storage, String title) {
+        return generateDirectory(storage) + '/' + title + ".jpg";
+    }
+
+    public static String generateBucketId(String storage) {
+        // Match the code in MediaProvider.computeBucketValues().
+        return String.valueOf(generateDirectory(storage).toLowerCase().hashCode());
+    }
+
+    public static long getAvailableSpace(String storage) {
+        String state = Environment.getExternalStorageState(storage);
         Log.d(TAG, "External storage state=" + state);
         if (Environment.MEDIA_CHECKING.equals(state)) {
             return PREPARING;
@@ -140,14 +153,15 @@ public class Storage {
             return UNAVAILABLE;
         }
 
-        File dir = new File(DIRECTORY);
+        String directory = generateDirectory(storage);
+        File dir = new File(directory);
         dir.mkdirs();
         if (!dir.isDirectory() || !dir.canWrite()) {
             return UNAVAILABLE;
         }
 
         try {
-            StatFs stat = new StatFs(DIRECTORY);
+            StatFs stat = new StatFs(directory);
             return stat.getAvailableBlocks() * (long) stat.getBlockSize();
         } catch (Exception e) {
             Log.i(TAG, "Fail to access external storage", e);
@@ -159,8 +173,8 @@ public class Storage {
      * OSX requires plugged-in USB storage to have path /DCIM/NNNAAAAA to be
      * imported. This is a temporary fix for bug#1655552.
      */
-    public static void ensureOSXCompatible() {
-        File nnnAAAAA = new File(DCIM, "100ANDRO");
+    public static void ensureOSXCompatible(String storage) {
+        File nnnAAAAA = new File(generateDCIM(storage), "100ANDRO");
         if (!(nnnAAAAA.exists() || nnnAAAAA.mkdirs())) {
             Log.e(TAG, "Failed to create " + nnnAAAAA.getPath());
         }
