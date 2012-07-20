@@ -95,10 +95,6 @@
     <!-- In select camera setting, front-facing camera. [CHAR LIMIT=14] -->
     <string name="pref_camera_id_entry_front">Front</string>
 
-    <!-- More Settings screen, power button title -->
-    <string name="pref_camera_power_shutter_title">Power shutter</string>
-    <string name="pref_camera_power_shutter_default">Off</string>
-
     <!-- More Settings screen, record location title text -->
     <string name="pref_camera_recordlocation_title">Store location</string>
     <string name="pref_camera_recordlocation_default" translatable="false">none</string>
@@ -240,19 +236,6 @@
 
     <!-- Settings screen, Timer mode entries -->
     <string name="pref_camera_timer_entry_0">Off</string>
-    <string name="pref_camera_timer_entry_10">10s</string>
-    <string name="pref_camera_timer_entry_20">20s</string>
-    <string name="pref_camera_timer_entry_30">30s</string>
-    <string name="pref_camera_timer_entry_40">40s</string>
-    <string name="pref_camera_timer_entry_50">50s</string>
-    <string name="pref_camera_timer_entry_60">60s</string>
-
-    <!-- Settings screen, Timer mode title -->
-    <string name="pref_camera_timer_title">Timer mode</string>
-    <string name="pref_camera_timer_default" translatable="false">0</string>
-
-    <!-- Settings screen, Timer mode entries -->
-    <string name="pref_camera_timer_entry_0">off</string>
     <string name="pref_camera_timer_entry_10">10s</string>
     <string name="pref_camera_timer_entry_20">20s</string>
     <string name="pref_camera_timer_entry_30">30s</string>

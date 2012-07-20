@@ -63,9 +63,6 @@
     <string name="pref_video_time_lapse_frame_interval_entry_10000" translatable="false">10 秒</string>
     <string name="pref_camera_settings_category" msgid="2576236450859613120">"相机设置"</string>
     <string name="pref_camcorder_settings_category" msgid="460313486231965141">"摄像机设置"</string>
-    <!-- More Settings screen, power button title -->
-    <string name="pref_camera_power_shutter_title">电源键快门</string>
-    <string name="pref_camera_power_shutter_default">关闭</string>
 
     <!-- More Settings screen, storage title -->
     <string name="pref_camera_storage_title">存储</string>
