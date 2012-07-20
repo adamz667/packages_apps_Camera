@@ -181,6 +181,7 @@ public class VideoCamera extends ActivityBase
     private boolean mOpenCameraFail = false;
     private boolean mCameraDisabled = false;
 
+    private String mStorage;
     private long mStorageSpace;
 
     private MediaRecorder mMediaRecorder;
@@ -261,12 +262,15 @@ public class VideoCamera extends ActivityBase
 
     private int mZoomState = ZOOM_STOPPED;
     private boolean mSmoothZoomSupported = false;
-    private boolean mVolumeZoom = false;    // Volume zoom.
     private int mZoomValue;  // The current zoom value.
     private int mZoomMax;
     private int mTargetZoomValue;
     private ZoomControl mZoomControl;
     private final ZoomListener mZoomListener = new ZoomListener();
+
+    private boolean mRestartPreview = false;
+    private int videoWidth; 
+    private int videoHeight;
 
     // This Handler is used to post message back onto the main thread of the
     // application
@@ -359,6 +363,7 @@ public class VideoCamera extends ActivityBase
         mPreferences = new ComboPreferences(this);
         CameraSettings.upgradeGlobalPreferences(mPreferences.getGlobal());
         mCameraId = CameraSettings.readPreferredCameraId(mPreferences);
+        mStorage = CameraSettings.readStorage(mPreferences);
         powerShutter(mPreferences);
         //Testing purpose. Launch a specific camera through the intent extras.
         int intentCameraId = Util.getCameraFacingIntentExtras(this);
@@ -366,9 +371,6 @@ public class VideoCamera extends ActivityBase
             mCameraId = intentCameraId;
         }
 
-        // Initialize volume zoom.
-        mVolumeZoom = VolumeZoomPreference.get(mPreferences, mContentResolver);
-        
         mPreferences.setLocalId(this, mCameraId);
         CameraSettings.upgradeLocalPreferences(mPreferences.getLocal());
 
@@ -526,7 +528,7 @@ public class VideoCamera extends ActivityBase
         final String[] OTHER_SETTING_KEYS = {
                     CameraSettings.KEY_RECORD_LOCATION,
                     CameraSettings.KEY_POWER_SHUTTER,
-                    CameraSettings.KEY_VOLUME_ZOOM};
+                    CameraSettings.KEY_STORAGE};
 
         CameraPicker.setImageResourceId(R.drawable.ic_switch_video_facing_holo_light);
         mIndicatorControlContainer.initialize(this, mPreferenceGroup,
@@ -689,7 +691,7 @@ public class VideoCamera extends ActivityBase
     private OnScreenHint mStorageHint;
 
     private void updateAndShowStorageHint() {
-        mStorageSpace = Storage.getAvailableSpace();
+        mStorageSpace = Storage.getAvailableSpace(mStorage);
         showStorageHint();
     }
 
@@ -875,7 +877,7 @@ public class VideoCamera extends ActivityBase
         intentFilter.addDataScheme("file");
         mReceiver = new MyBroadcastReceiver();
         registerReceiver(mReceiver, intentFilter);
-        mStorageSpace = Storage.getAvailableSpace();
+        mStorageSpace = Storage.getAvailableSpace(mStorage);
 
         mHandler.postDelayed(new Runnable() {
             public void run() {
@@ -1062,24 +1064,6 @@ public class VideoCamera extends ActivityBase
             case KeyEvent.KEYCODE_MENU:
                 if (mMediaRecorderRecording) return true;
                 break;
-            case KeyEvent.KEYCODE_VOLUME_UP:
-                // If the Volume Up key is pressed, zoom in.
-                if (mVolumeZoom && (event.getRepeatCount() == 0)) {
-                        mZoomValue = (((mZoomValue + 10) > mZoomMax) ? mZoomMax : (mZoomValue + 10)); 
-                        onZoomValueChanged(mZoomValue);
-                        mZoomControl.setZoomIndex(mZoomValue);
-                        return true;
-                }
-                return false;
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-                // If the Volume Down key is pressed, zoom out.
-                if (mVolumeZoom && (event.getRepeatCount() == 0)) {
-                        mZoomValue = (((mZoomValue - 10) < 0) ? 0 : (mZoomValue - 10)); 
-                        onZoomValueChanged(mZoomValue);
-                        mZoomControl.setZoomIndex(mZoomValue);
-                        return true;
-                }
-                return false;
         }
 
         return super.onKeyDown(keyCode, event);
@@ -1096,11 +1080,6 @@ public class VideoCamera extends ActivityBase
                     onShutterButtonClick();
                 }
                 return true;
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-            case KeyEvent.KEYCODE_VOLUME_UP:
-                if (mVolumeZoom) {
-                    return true;
-                }
         }
         return super.onKeyUp(keyCode, event);
     }
@@ -1159,7 +1138,7 @@ public class VideoCamera extends ActivityBase
     }
 
     private void gotoGallery() {
-        MenuHelper.gotoCameraVideoGallery(this);
+        MenuHelper.gotoCameraVideoGallery(this, Storage.generateBucketId(mStorage));
     }
 
     @Override
@@ -1216,6 +1195,9 @@ public class VideoCamera extends ActivityBase
 
         Intent intent = getIntent();
         Bundle myExtras = intent.getExtras();
+
+        videoWidth = mProfile.videoFrameWidth;
+        videoHeight = mProfile.videoFrameHeight;
 
         long requestedSizeLimit = 0;
         closeVideoFileDescriptor();
@@ -1436,7 +1418,7 @@ public class VideoCamera extends ActivityBase
         // Used when emailing.
         String filename = title + convertOutputFormatToFileExt(outputFileFormat);
         String mime = convertOutputFormatToMimeType(outputFileFormat);
-        mVideoFilename = Storage.DIRECTORY + '/' + filename;
+        mVideoFilename = Storage.generateDirectory(mStorage) + '/' + filename;
         mCurrentVideoValues = new ContentValues(7);
         mCurrentVideoValues.put(Video.Media.TITLE, title);
         mCurrentVideoValues.put(Video.Media.DISPLAY_NAME, filename);
@@ -1805,7 +1787,8 @@ public class VideoCamera extends ActivityBase
 
     private void updateThumbnailButton() {
         if (mThumbnail == null || !Util.isUriValid(mThumbnail.getUri(), mContentResolver)) {
-            mThumbnail = Thumbnail.getLastThumbnail(mContentResolver);
+            mThumbnail = Thumbnail.getLastThumbnail(mContentResolver,
+                Storage.generateBucketId(mStorage));
         }
         if (mThumbnail != null) {
             mThumbnailView.setBitmap(mThumbnail.getBitmap());
@@ -1920,6 +1903,8 @@ public class VideoCamera extends ActivityBase
     }
 
     private void setCameraHardwareParameters() {
+        CameraSettings.dumpParameters(mParameters);
+
         mCameraDevice.setParameters(mParameters);
     }
 
@@ -2003,6 +1988,7 @@ public class VideoCamera extends ActivityBase
                 CameraProfile.QUALITY_HIGH);
         mParameters.setJpegQuality(jpegQuality);
 
+        CameraSettings.dumpParameters(mParameters);
         mCameraDevice.setParameters(mParameters);
         // Keep preview size up to date.
         mParameters = mCameraDevice.getParameters();
@@ -2162,11 +2148,14 @@ public class VideoCamera extends ActivityBase
                     mPreferences, getContentResolver());
             mLocationManager.recordLocation(recordLocation);
 
-            if (mParameters.isZoomSupported())
-                mVolumeZoom = VolumeZoomPreference.get(mPreferences, mContentResolver);
-            
             // Check if the current effects selection has changed
             if (updateEffectSelection()) return;
+
+            String storage = CameraSettings.readStorage(mPreferences);
+            if (!storage.equals(mStorage)) {
+                mStorage = storage;
+                updateAndShowStorageHint();
+            }
 
             // Check if camera id is changed.
             int cameraId = CameraSettings.readPreferredCameraId(mPreferences);
@@ -2191,10 +2180,20 @@ public class VideoCamera extends ActivityBase
             } else {
                 readVideoPreferences();
                 showTimeLapseUI(mCaptureTimeLapse);
+
+                //To restart the preview even if record size changes..
+                //Remove once HAL change is ready
+                if(mProfile.videoFrameWidth != videoWidth ||
+                   mProfile.videoFrameHeight != videoHeight ) {
+                    videoWidth = mProfile.videoFrameWidth;
+                    videoHeight = mProfile.videoFrameHeight;
+                    mRestartPreview = true;
+                }
+
                 // We need to restart the preview if preview size is changed.
                 Size size = mParameters.getPreviewSize();
                 if (size.width != mDesiredPreviewWidth
-                        || size.height != mDesiredPreviewHeight) {
+                        || size.height != mDesiredPreviewHeight || mRestartPreview) {
                     if (!effectsActive()) {
                         mCameraDevice.stopPreview();
                     } else {
@@ -2202,6 +2201,7 @@ public class VideoCamera extends ActivityBase
                     }
                     resizeForPreviewAspectRatio();
                     startPreview(); // Parameters will be set in startPreview().
+                    mRestartPreview = false;
                 } else {
                     setCameraParameters();
                 }
@@ -2257,10 +2257,9 @@ public class VideoCamera extends ActivityBase
         if (size.width != mDesiredPreviewWidth
                 || size.height != mDesiredPreviewHeight) {
             resizeForPreviewAspectRatio();
-        } else {
-            // Start up preview again
-            startPreview();
         }
+        // Start up preview
+        startPreview();
     }
 
     private void showTimeLapseUI(boolean enable) {
@@ -2349,9 +2348,6 @@ public class VideoCamera extends ActivityBase
         mZoomControl.setSmoothZoomSupported(mSmoothZoomSupported);
         mZoomControl.setOnZoomChangeListener(new ZoomChangeListener());
         mCameraDevice.setZoomChangeListener(mZoomListener);
-        
-        // Initialize volume zoom.
-        mVolumeZoom = VolumeZoomPreference.get(mPreferences, mContentResolver);
     }
 
     private final class ZoomListener
@@ -2439,6 +2435,7 @@ public class VideoCamera extends ActivityBase
         Util.setRotationParameter(mParameters, mCameraId, mOrientation);
         Location loc = mLocationManager.getCurrentLocation();
         Util.setGpsParameters(mParameters, loc);
+        CameraSettings.dumpParameters(mParameters);
         mCameraDevice.setParameters(mParameters);
 
         Log.v(TAG, "Video snapshot start");
@@ -2469,7 +2466,7 @@ public class VideoCamera extends ActivityBase
         String title = Util.createJpegName(dateTaken);
         int orientation = Exif.getOrientation(data);
         Size s = mParameters.getPictureSize();
-        Uri uri = Storage.addImage(mContentResolver, title, dateTaken, loc, orientation, data,
+        Uri uri = Storage.addImage(mContentResolver, mStorage, title, dateTaken, loc, orientation, data,
                 s.width, s.height);
         if (uri != null) {
             // Create a thumbnail whose width is equal or bigger than that of the preview.

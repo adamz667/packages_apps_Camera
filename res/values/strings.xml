@@ -92,51 +92,28 @@
 
     <!-- In select camera setting, back facing camera. [CHAR LIMIT=14] -->
     <string name="pref_camera_id_entry_back">Back</string>
-
     <!-- In select camera setting, front-facing camera. [CHAR LIMIT=14] -->
     <string name="pref_camera_id_entry_front">Front</string>
 
-    <!-- More Settings screen, record location title text -->
+    <!-- Settings screen, setting title text -->
     <string name="pref_camera_recordlocation_title">Store location</string>
+
     <string name="pref_camera_recordlocation_default" translatable="false">none</string>
 
-    <!-- More Settings screen, record location dialog choices -->
+    <!-- Settings screen, Record location dialog choices -->
     <string name="pref_camera_recordlocation_entry_off">Off</string>
     <string name="pref_camera_recordlocation_entry_on">On</string>
-    
-    <!-- More Settings screen, volume zoom setting title text -->
-    <string name="pref_camera_volumezoom_title">Volume zoom</string>
-    
-    <string name="pref_camera_volumezoom_default" translatable="false">none</string>
-    
-    <!-- More Settings screen, Volume zoom dialog choices -->
-    <string name="pref_camera_volumezoom_entry_off">Off</string>
-    <string name="pref_camera_volumezoom_entry_on">On</string>
 
     <!-- The Video quality settings in preference [CHAR LIMIT=21] -->
     <string name="pref_video_quality_title">Video quality</string>
-    <!-- The default quality value is the highest available resolution (1). -->
-    <string name="pref_video_quality_default" translatable="false">1</string>
+    <!-- The default quality value is 5 (720p) -->
+    <string name="pref_video_quality_default" translatable="false">5</string>
     <!-- Video quality setting entry. Videos will be recorded in 1080p quality. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_1080p" translatable="false">1080p</string>
+    <string name="pref_video_quality_entry_1080p" translatable="false">HD</string>
     <!-- Video quality setting entry. Videos will be recorded in 720p quality. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_720p" translatable="false">720p</string>
+    <string name="pref_video_quality_entry_720p" translatable="false">HD</string>
     <!-- Video quality setting entry. Videos will be recorded in 480p quality. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_480p" translatable="false">480p</string>
-    <!-- Video quality setting entry. Videos will be recorded in FWVGA quality. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_fwvga" translatable="false">FWVGA</string>
-    <!-- Video quality setting entry. Videos will be recorded in WVGA quality. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_wvga" translatable="false">WVGA</string>
-    <!-- Video quality setting entry. Videos will be recorded in VGA quality. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_vga" translatable="false">VGA</string>
-    <!-- Video quality setting entry. Videos will be recorded in WQVGA quality. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_wqvga" translatable="false">WQVGA</string>
-    <!-- Video quality setting entry. Videos will be recorded in CIF quality. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_CIF" translatable="false">CIF</string>
-    <!-- Video quality setting entry. Videos will be recorded in QVGA quality. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_QVGA" translatable="false">QVGA</string>
-    <!-- Video quality setting entry. Videos will be recorded in QCIF quality. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_QCIF" translatable="false">QCIF</string>
+    <string name="pref_video_quality_entry_480p" translatable="false">SD</string>
 
     <!-- Describes the preference dialog for choosing interval between frame capture for
     time lapse recording. Appears at top of the dialog. [CHAR LIMIT=30] -->
@@ -161,9 +138,16 @@
     <string name="pref_camera_power_shutter_title">Power shutter</string>
     <string name="pref_camera_power_shutter_default">off</string>
 
+    <!-- More Settings screen, focus sound title -->
+    <string name="pref_camera_focus_sound_title">Focus sound</string>
+    <string name="pref_camera_focus_sound_default">on</string>
+
+    <!-- More Settings screen, storage title -->
+    <string name="pref_camera_storage_title">Storage</string>
+
     <!-- More Settings screen, force preview title -->
     <string name="pref_camera_force_preview_title">Force preview</string>
-    <string name="pref_camera_force_preview_default">on</string>
+    <string name="pref_camera_force_preview_default">off</string>
 
     <!-- Settings screen, Picture size title -->
     <string name="pref_camera_picturesize_title">Picture size</string>
@@ -172,6 +156,7 @@
     <string name="pref_camera_picturesize_entry_3264x2448">8MP</string>
     <string name="pref_camera_picturesize_entry_3264x1968">6.5MP(W)</string>
     <string name="pref_camera_picturesize_entry_3264x1952">6MP(W)</string>
+    <string name="pref_camera_picturesize_entry_3264x1836">6MP(W)</string>
     <string name="pref_camera_picturesize_entry_2592x1936">5MP</string>
     <string name="pref_camera_picturesize_entry_2592x1552">4MP(W)</string>
     <string name="pref_camera_picturesize_entry_2560x1712">4MP</string>
@@ -181,6 +166,7 @@
     <string name="pref_camera_picturesize_entry_1920x1080">HD1080</string>
     <string name="pref_camera_picturesize_entry_1600x1200">UXGA</string>
     <string name="pref_camera_picturesize_entry_1600x960">1.5MP(W)</string>
+    <string name="pref_camera_picturesize_entry_1392x1392">2MP</string>
     <string name="pref_camera_picturesize_entry_1280x1024">SXGA</string>
     <string name="pref_camera_picturesize_entry_1280x960">SXGA(4:3)</string>
     <string name="pref_camera_picturesize_entry_1280x768">WXGA</string>
@@ -202,13 +188,32 @@
     <string name="pref_camera_focusmode_entry_macro">Macro</string>
     <string name="pref_camera_focusmode_entry_fixed">Fixed</string>
     <string name="pref_camera_focusmode_entry_facedetect">Face detect</string>
+    <string name="pref_camera_focusmode_entry_continuouspicture">Continuous Picture</string>
+
+    <!-- Default ISO setting. Do not translate. -->
+    <string name="pref_camera_iso_default">auto</string>
+
+    <!-- Settings screen, ISO title -->
+    <string name="pref_camera_iso_title">ISO</string>
+
+    <!-- Settings screen, ISO dialog radio button choices -->
+    <string name="pref_camera_iso_entry_auto">Auto</string>
+    <string name="pref_camera_iso_entry_isodeblur">Auto (HJR)</string>
+    <string name="pref_camera_iso_entry_iso50">50</string>
+    <string name="pref_camera_iso_entry_iso100">100</string>
+    <string name="pref_camera_iso_entry_iso200">200</string>
+    <string name="pref_camera_iso_entry_iso400">400</string>
+    <string name="pref_camera_iso_entry_iso800">800</string>
+    <string name="pref_camera_iso_entry_iso1000">1000</string>
+    <string name="pref_camera_iso_entry_iso1200">1200</string>
+    <string name="pref_camera_iso_entry_iso1600">1600</string>
 
     <!-- Settings screen, Timer mode title -->
     <string name="pref_camera_timer_title">Timer mode</string>
     <string name="pref_camera_timer_default" translatable="false">0</string>
 
     <!-- Settings screen, Timer mode entries -->
-    <string name="pref_camera_timer_entry_0">off</string>
+    <string name="pref_camera_timer_entry_0">Off</string>
     <string name="pref_camera_timer_entry_10">10s</string>
     <string name="pref_camera_timer_entry_20">20s</string>
     <string name="pref_camera_timer_entry_30">30s</string>
@@ -267,6 +272,13 @@
     <string name="pref_camera_scenemode_entry_duskdawn">Duskdawn</string>
     <string name="pref_camera_scenemode_entry_fallcolor">Fallcolor</string>
     <string name="pref_camera_scenemode_entry_text">Text</string>
+    <string name="pref_camera_scenemode_entry_portrait">Portrait</string>
+    <string name="pref_camera_scenemode_entry_landscape">Landscape</string>
+    <string name="pref_camera_scenemode_entry_beach">Beach</string>
+    <string name="pref_camera_scenemode_entry_snow">Snow</string>
+    <string name="pref_camera_scenemode_entry_fireworks">Fireworks</string>
+    <string name="pref_camera_scenemode_entry_sports">Sports</string>
+    <string name="pref_camera_scenemode_entry_candlelight">Candlelight</string>
 
     <!-- Toast after trying to select a setting that is not allowed to change in scene mode [CHAR LIMIT=NONE] -->
     <string name="not_selectable_in_scene_mode">Not selectable in scene mode.</string>
@@ -417,4 +429,5 @@
 
     <!-- TODO: remove the string as it is a work-around solution to bypass the default speak of the element type. -->
     <string name="empty" translatable="false">" "</string>
+
 </resources>
